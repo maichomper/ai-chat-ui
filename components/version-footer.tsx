@@ -2,16 +2,28 @@
 
 import { isAfter } from 'date-fns';
 import { motion } from 'framer-motion';
+/* Commenting out unused imports but keeping them for future reference */
+// import { useCallback, useEffect } from 'react';
 import { useState } from 'react';
 import { useSWRConfig } from 'swr';
 import { useWindowSize } from 'usehooks-ts';
 
-import type { Document } from '@/lib/db/schema';
-import { getDocumentTimestampByIndex } from '@/lib/utils';
-
 import { LoaderIcon } from './icons';
 import { Button } from './ui/button';
 import { useArtifact } from '@/hooks/use-artifact';
+/* Commenting out unused imports but keeping them for future reference */
+// import { Slider } from '@/components/ui/slider';
+import { cn, getDocumentTimestampByIndex } from '@/lib/utils';
+// import type { Document } from '@/lib/db/schema';
+
+// Using simple type since we're not using DB
+type Document = {
+  id: string;
+  title: string;
+  content: string;
+  kind: string;
+  createdAt: Date;
+};
 
 interface VersionFooterProps {
   handleVersionChange: (type: 'next' | 'prev' | 'toggle' | 'latest') => void;

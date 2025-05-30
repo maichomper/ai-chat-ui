@@ -1,4 +1,5 @@
-export interface Vote {
+// Using simple types since we're not using DB
+export type Vote = {
   id: string;
   messageId: string;
   chatId: string;
@@ -7,7 +8,7 @@ export interface Vote {
   createdAt: Date;
 }
 
-export interface Suggestion {
+export type Suggestion = {
   id: string;
   content: string;
   createdAt: Date;

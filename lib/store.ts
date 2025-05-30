@@ -20,6 +20,7 @@ interface Chat {
   visibility: VisibilityType;
 }
 
+// Using simple types since we're not using DB
 interface Document {
   id: string;
   chatId: string;

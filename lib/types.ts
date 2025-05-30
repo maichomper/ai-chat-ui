@@ -16,7 +16,17 @@ export interface Chat {
   createdAt: Date;
 }
 
-export interface DBMessage {
+// Commenting out DB interfaces but keeping them for reference
+// export interface DBMessage {
+//   id: string;
+//   chatId: string;
+//   content: string;
+//   role: 'user' | 'assistant';
+//   createdAt: Date;
+// }
+
+// Using simple type since we're not using DB
+type DBMessage = {
   id: string;
   chatId: string;
   content: string;
@@ -33,9 +43,19 @@ export interface Document {
   createdAt: Date;
 }
 
-export interface Suggestion {
+// export interface Suggestion {
+//   id: string;
+//   documentId: string;
+//   content: string;
+//   createdAt: Date;
+// }
+
+// Using simple types since we're not using DB
+export type Suggestion = {
   id: string;
-  documentId: string;
+  documentId?: string;  // Making this optional since not all usages need it
   content: string;
   createdAt: Date;
-} 
+  originalText: string;
+  suggestedText: string;
+}; 

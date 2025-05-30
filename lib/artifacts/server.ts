@@ -1,12 +1,22 @@
-import { codeDocumentHandler } from '@/artifacts/code/server';
-import { imageDocumentHandler } from '@/artifacts/image/server';
-import { sheetDocumentHandler } from '@/artifacts/sheet/server';
-import { textDocumentHandler } from '@/artifacts/text/server';
+/* Commenting out imports but keeping them for future reference */
+// import { codeDocumentHandler } from '@/artifacts/code/server';
+// import { imageDocumentHandler } from '@/artifacts/image/server';
+// import { sheetDocumentHandler } from '@/artifacts/sheet/server';
+// import { textDocumentHandler } from '@/artifacts/text/server';
 import { ArtifactKind } from '@/components/artifact';
 import { DataStreamWriter } from 'ai';
-import { Document } from '../db/schema';
-import { saveDocument } from '../db/queries';
+// import { Document } from '../db/schema';
+// import { saveDocument } from '../db/queries';
 import { Session } from 'next-auth';
+
+// Using simple type since we're not using DB
+type Document = {
+  id: string;
+  title: string;
+  content: string;
+  kind: string;
+  createdAt: Date;
+};
 
 export interface SaveDocumentProps {
   id: string;
@@ -52,13 +62,13 @@ export function createDocumentHandler<T extends ArtifactKind>(config: {
       });
 
       if (args.session?.user?.id) {
-        await saveDocument({
-          id: args.id,
-          title: args.title,
-          content: draftContent,
-          kind: config.kind,
-          userId: args.session.user.id,
-        });
+        // await saveDocument({
+        //   id: args.id,
+        //   title: args.title,
+        //   content: draftContent,
+        //   kind: config.kind,
+        //   userId: args.session.user.id,
+        // });
       }
 
       return;
@@ -72,13 +82,13 @@ export function createDocumentHandler<T extends ArtifactKind>(config: {
       });
 
       if (args.session?.user?.id) {
-        await saveDocument({
-          id: args.document.id,
-          title: args.document.title,
-          content: draftContent,
-          kind: config.kind,
-          userId: args.session.user.id,
-        });
+        // await saveDocument({
+        //   id: args.document.id,
+        //   title: args.document.title,
+        //   content: draftContent,
+        //   kind: config.kind,
+        //   userId: args.session.user.id,
+        // });
       }
 
       return;
@@ -90,10 +100,11 @@ export function createDocumentHandler<T extends ArtifactKind>(config: {
  * Use this array to define the document handlers for each artifact kind.
  */
 export const documentHandlersByArtifactKind: Array<DocumentHandler> = [
-  textDocumentHandler,
-  codeDocumentHandler,
-  imageDocumentHandler,
-  sheetDocumentHandler,
+  // Commenting out handlers until they are properly implemented
+  // textDocumentHandler,
+  // codeDocumentHandler,
+  // imageDocumentHandler,
+  // sheetDocumentHandler,
 ];
 
 export const artifactKinds = ['text', 'code', 'image', 'sheet'] as const;

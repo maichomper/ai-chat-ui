@@ -11,7 +11,10 @@ import { type ClassValue, clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import { signOut } from 'next-auth/react';
 
-import type { DBMessage, Document } from '@/lib/db/schema';
+// import type { DBMessage, Document } from '@/lib/db/schema';
+// Using any for now since we're not using DB
+type DBMessage = any;
+type Document = any;
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));

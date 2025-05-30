@@ -2,11 +2,19 @@
 
 import { updateChatVisibility } from '@/app/(chat)/actions';
 import { VisibilityType } from '@/components/visibility-selector';
-import { Chat } from '@/lib/db/schema';
-import { useMemo } from 'react';
+import { useMemo, useCallback, useState } from 'react';
 import useSWR, { useSWRConfig } from 'swr';
 import { useRouter } from 'next/navigation';
-import { createFetcher } from '@/lib/utils';
+// import { createFetcher } from '@/lib/utils'; // Not used in this file
+
+// Using simple type since we're not using DB
+type Chat = {
+  id: string;
+  title: string;
+  visibility: VisibilityType;
+  userId: string;
+  createdAt: Date;
+};
 
 export function useChatVisibility({
   chatId,

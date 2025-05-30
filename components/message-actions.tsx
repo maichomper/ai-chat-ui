@@ -1,10 +1,16 @@
+'use client';
+
 import type { Message } from 'ai';
 import { useSWRConfig } from 'swr';
 import { useCopyToClipboard } from 'usehooks-ts';
 import { useRouter } from 'next/navigation';
+/* Commenting out unused imports but keeping them for future reference */
+// import { useCallback } from 'react';
+import { useState, memo } from 'react';
 
-import type { Vote } from '@/lib/db/schema';
-import { fetcher } from '@/lib/utils';
+/* Commenting out unused imports but keeping them for future reference */
+// import { fetcher } from '@/lib/utils';
+// import type { Vote } from '@/lib/db/schema';
 
 import { CopyIcon, ThumbDownIcon, ThumbUpIcon } from './icons';
 import { Button } from './ui/button';
@@ -14,9 +20,21 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from './ui/tooltip';
-import { memo } from 'react';
 import equal from 'fast-deep-equal';
 import { toast } from 'sonner';
+/* Commenting out unused imports but keeping them for future reference */
+// import { ThumbsDown, ThumbsUp } from 'lucide-react';
+
+// Using simple type since we're not using DB
+type Vote = {
+  id: string;
+  messageId: string;
+  chatId: string;
+  userId: string;
+  value: number;
+  createdAt: Date;
+  isUpvoted?: boolean; // Adding this back to preserve functionality
+};
 
 export function PureMessageActions({
   chatId,
@@ -98,8 +116,12 @@ export function PureMessageActions({
                         return [
                           ...votesWithoutCurrent,
                           {
-                            chatId,
+                            id: Math.random().toString(),
                             messageId: message.id,
+                            chatId,
+                            userId: 'temp-user-id',
+                            value: 1,
+                            createdAt: new Date(),
                             isUpvoted: true,
                           },
                         ];
@@ -151,8 +173,12 @@ export function PureMessageActions({
                         return [
                           ...votesWithoutCurrent,
                           {
-                            chatId,
+                            id: Math.random().toString(),
                             messageId: message.id,
+                            chatId,
+                            userId: 'temp-user-id',
+                            value: -1,
+                            createdAt: new Date(),
                             isUpvoted: false,
                           },
                         ];
