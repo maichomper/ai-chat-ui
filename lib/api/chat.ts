@@ -180,12 +180,17 @@ class ChatApi {
     if (params.limit) queryParams.append('limit', params.limit.toString());
     if (params.offset) queryParams.append('offset', params.offset.toString());
 
+    console.log('[SERVER] getConversations - Making request to:', `${API_BASE_URL}/conversations?${queryParams.toString()}`);
+    
     const response = await this.fetchWithAuth(
       `${API_BASE_URL}/conversations?${queryParams.toString()}`,
       accessToken
     );
 
-    return response.json();
+    const data = await response.json();
+    console.log('[SERVER] getConversations - Response:', JSON.stringify(data, null, 2));
+    
+    return data;
   }
 
   async getConversation(id: string, accessToken: string): Promise<Conversation> {
@@ -206,28 +211,28 @@ class ChatApi {
 
   async getConversationHistory(conversationId: string, accessToken: string): Promise<{ conversation: Conversation; messages: ChatMessage[] }> {
     try {
-      const messages = await this.fetchWithAuth(
+      const response = await this.fetchWithAuth(
         `${API_BASE_URL}/chat/${conversationId}/history`,
         accessToken
       );
 
-      const messagesData = await messages.json();
+      const data = await response.json();
 
-      if (!messagesData || messagesData.length === 0) {
+      if (!data) {
         throw new Error('Conversation not found');
       }
 
       // Create a default conversation object since we don't get it from the API
       const conversation: Conversation = {
         id: conversationId,
-        title: messagesData[0]?.content.slice(0, 50) || 'New Chat', // Use first message as title
-        created_at: messagesData[0]?.created_at || new Date().toISOString(),
-        updated_at: messagesData[messagesData.length - 1]?.created_at || new Date().toISOString(),
+        title: data[0]?.content.slice(0, 50) || 'New Chat', // Use first message as title
+        created_at: data[0]?.created_at || new Date().toISOString(),
+        updated_at: data[data.length - 1]?.created_at || new Date().toISOString(),
         visibility: 'private',
         userId: '', // This will be set by the page component
       };
 
-      return { conversation, messages: messagesData };
+      return { conversation, messages: data };
     } catch (error) {
       if (error instanceof Error) {
         if (error.message.includes('404') || error.message.includes('Conversation not found')) {

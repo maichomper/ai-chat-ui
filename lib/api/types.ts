@@ -16,9 +16,10 @@ export interface ChatMessage {
 }
 
 export interface ConversationSummary {
-  conversation_id: string;
-  name: string;
+  id: string;
   created_at: string;
+  updated_at: string;
+  visibility: 'private' | 'public';
 }
 
 export interface ConversationsResponse {

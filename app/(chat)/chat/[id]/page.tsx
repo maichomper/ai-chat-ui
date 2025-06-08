@@ -12,11 +12,11 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
   const params = await props.params;
   const { id } = params;
   
-  console.log('Loading chat page for ID:', id);
+  console.log('[SERVER] Loading chat page for ID:', id);
   
   try {
     const session = await auth();
-    console.log('Session:', session ? 'Found' : 'Not found');
+    console.log('[SERVER] Session:', session ? 'Found' : 'Not found');
 
     if (!session || !session.user) {
       redirect('/login');
@@ -25,17 +25,18 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
     const cookieStore = await cookies();
     const cookie = cookieStore.get('access_token');
     
-    console.log('Access token:', cookie ? 'Found' : 'Not found');
+    console.log('[SERVER] Access token:', cookie ? 'Found' : 'Not found');
     
     if (!cookie || !cookie.value) {
       redirect('/login');
     }
 
     try {
-      console.log('Fetching conversation history...');
+      console.log('[SERVER] Fetching conversation history for ID:', id);
       const { conversation, messages } = await chatApi.getConversationHistory(id, cookie.value);
-      console.log('Conversation:', conversation ? 'Found' : 'Not found');
-      console.log('Messages count:', messages?.length || 0);
+      console.log('[SERVER] Conversation details:', JSON.stringify(conversation, null, 2));
+      console.log('[SERVER] Conversation:', conversation ? 'Found' : 'Not found');
+      console.log('[SERVER] Messages count:', messages?.length || 0);
       
       if (!conversation || !messages) {
         return notFound();
