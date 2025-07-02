@@ -21,10 +21,11 @@ import { UseChatHelpers } from '@ai-sdk/react';
 
 type ToolFeedback = {
   type: 'tool_status';
-  action: 'start' | 'end';
+  action: 'start' | 'end' | 'call' | 'result';
   message: string;
   tool: string;
   args?: Record<string, any> | null;
+  output?: any;
 };
 
 const PurePreviewMessage = ({
