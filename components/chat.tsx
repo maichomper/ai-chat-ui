@@ -25,9 +25,11 @@ type AgentData = {
 
 type ToolFeedback = {
   type: 'tool_status';
-  action: 'start' | 'end';
+  action: 'start' | 'end' | 'call' | 'result';
   message: string;
   tool: string;
+  args?: Record<string, any> | null;
+  output?: any;
 }
 
 export function Chat({
@@ -129,41 +131,43 @@ export function Chat({
     <div className="flex flex-col h-full">
       <div className="flex items-center gap-2 border-b border-gray-200">
         <ChatHeader chatId={id} />
-        {currentAgent && (
-          <span className="px-2 py-1 text-xs font-medium bg-blue-100 text-blue-600 rounded-full animate-fade-in">
-            {currentAgent}
-          </span>
-        )}
       </div>
 
-      <ToolFeedbackDisplay feedback={toolFeedback} />
-
-      <Messages
-        chatId={id}
-        status={isLoading ? 'streaming' : error ? 'error' : 'ready'}
-        votes={votes}
-        messages={messages}
-        setMessages={setMessages}
-        reload={async () => {
-          window.location.reload();
-          return null;
-        }}
-        isReadonly={isReadonly}
-        isArtifactVisible={isArtifactVisible}
-      />
-      <MultimodalInput
-        chatId={id}
-        input={input}
-        setInput={handleInput}
-        status={isLoading ? 'streaming' : error ? 'error' : 'ready'}
-        stop={stop}
-        attachments={attachments}
-        setAttachments={setAttachments}
-        messages={messages}
-        setMessages={setMessages}
-        append={append}
-        handleSubmit={handleSubmit}
-      />
+      <div className="flex-1 flex flex-col relative">
+        <div className="flex-1 overflow-hidden">
+          <Messages
+            chatId={id}
+            status={isLoading ? 'streaming' : error ? 'error' : 'ready'}
+            votes={votes}
+            messages={messages}
+            setMessages={setMessages}
+            reload={async () => {
+              window.location.reload();
+              return null;
+            }}
+            isReadonly={isReadonly}
+            isArtifactVisible={isArtifactVisible}
+            toolFeedback={toolFeedback}
+          />
+        </div>
+        
+        {/* Floating input - truly floating at bottom of chat window */}
+        <div className="sticky bottom-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-sm border-t border-border p-4 pointer-events-auto">
+          <MultimodalInput
+            chatId={id}
+            input={input}
+            setInput={handleInput}
+            status={isLoading ? 'streaming' : error ? 'error' : 'ready'}
+            stop={stop}
+            attachments={attachments}
+            setAttachments={setAttachments}
+            messages={messages}
+            setMessages={setMessages}
+            append={append}
+            handleSubmit={handleSubmit}
+          />
+        </div>
+      </div>
     </div>
   );
 }

@@ -142,6 +142,15 @@ class ChatApi {
                         await controller.enqueue(encoder.encode(`2:[{"feedback":{"type":"tool_status","action":"end","message":"✨ Tool operation complete","tool":"${event.data.tool_name || 'unknown'}"}}]\n`));
                       }
                       break;
+                    case 'run_item_stream_event':
+                      if (event.data.item_type === 'tool_call_item') {
+                        // Send tool call with arguments
+                        await controller.enqueue(encoder.encode(`2:[{"feedback":{"type":"tool_status","action":"call","message":"📋 Tool call arguments","tool":"${event.data.tool_name || 'unknown'}", "args": ${event.data.arguments || "null"}}}]\n`));
+                      } else if (event.data.item_type === 'tool_call_output_item') {
+                        // Send tool output result
+                        await controller.enqueue(encoder.encode(`2:[{"feedback":{"type":"tool_status","action":"result","message":"📤 Tool output","tool":"${event.data.tool_name || 'unknown'}", "output": ${JSON.stringify(event.data.output || null)}}}]\n`));
+                      }
+                      break;
                     case 'agent_updated_stream_event':
                       // Send agent information as data
                       await controller.enqueue(encoder.encode(`2:[{"agent":{"name":"${event.data.agent_name}"}}]\n`));

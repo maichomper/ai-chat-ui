@@ -18,6 +18,14 @@ type Vote = {
   createdAt: Date;
 };
 
+type ToolFeedback = {
+  type: 'tool_status';
+  action: 'start' | 'end';
+  message: string;
+  tool: string;
+  args?: Record<string, any> | null;
+};
+
 interface MessagesProps {
   chatId: string;
   status: UseChatHelpers['status'];
@@ -27,6 +35,7 @@ interface MessagesProps {
   reload: UseChatHelpers['reload'];
   isReadonly: boolean;
   isArtifactVisible: boolean;
+  toolFeedback: Array<ToolFeedback>;
 }
 
 function PureMessages({
@@ -37,6 +46,7 @@ function PureMessages({
   setMessages,
   reload,
   isReadonly,
+  toolFeedback,
 }: MessagesProps) {
   const [messagesContainerRef, messagesEndRef] =
     useScrollToBottom<HTMLDivElement>();
@@ -44,7 +54,8 @@ function PureMessages({
   return (
     <div
       ref={messagesContainerRef}
-      className="flex flex-col min-w-0 gap-6 flex-1 overflow-y-scroll pt-4"
+      data-scroll-container
+      className="flex flex-col min-w-0 gap-6 flex-1 overflow-y-scroll pt-4 pb-4"
     >
       {messages.length === 0 && <Overview />}
 
@@ -62,6 +73,7 @@ function PureMessages({
           setMessages={setMessages}
           reload={reload}
           isReadonly={isReadonly}
+          toolFeedback={toolFeedback}
         />
       ))}
 

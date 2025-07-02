@@ -12,15 +12,32 @@ export function useScrollToBottom<T extends HTMLElement>(): [
     const end = endRef.current;
 
     if (container && end) {
-      const observer = new MutationObserver(() => {
-        end.scrollIntoView({ behavior: 'instant', block: 'end' });
+      const observer = new MutationObserver((mutations) => {
+        // Don't auto-scroll if disabled by accordion toggle
+        if (container.hasAttribute('data-disable-autoscroll')) {
+          return;
+        }
+        
+        // Only auto-scroll for new content, not for UI toggle changes
+        const hasContentChanges = mutations.some(mutation => {
+          if (mutation.type === 'childList') {
+            // Check if new message nodes were added (not just UI expansions)
+            return Array.from(mutation.addedNodes).some(node => {
+              return node.nodeType === Node.ELEMENT_NODE && 
+                     (node as Element).querySelector('[data-testid^="message-"]');
+            });
+          }
+          return false;
+        });
+        
+        if (hasContentChanges) {
+          end.scrollIntoView({ behavior: 'instant', block: 'end' });
+        }
       });
 
       observer.observe(container, {
         childList: true,
         subtree: true,
-        attributes: true,
-        characterData: true,
       });
 
       return () => observer.disconnect();

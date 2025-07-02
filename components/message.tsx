@@ -16,7 +16,16 @@ import { Button } from './ui/button';
 import { Tooltip, TooltipContent, TooltipTrigger } from './ui/tooltip';
 import { MessageEditor } from './message-editor';
 import { MessageReasoning } from './message-reasoning';
+import { MessageToolFeedback } from './message-tool-feedback';
 import { UseChatHelpers } from '@ai-sdk/react';
+
+type ToolFeedback = {
+  type: 'tool_status';
+  action: 'start' | 'end';
+  message: string;
+  tool: string;
+  args?: Record<string, any> | null;
+};
 
 const PurePreviewMessage = ({
   chatId,
@@ -26,6 +35,7 @@ const PurePreviewMessage = ({
   setMessages,
   reload,
   isReadonly,
+  toolFeedback,
 }: {
   chatId: string;
   message: UIMessage;
@@ -34,6 +44,7 @@ const PurePreviewMessage = ({
   setMessages: UseChatHelpers['setMessages'];
   reload: UseChatHelpers['reload'];
   isReadonly: boolean;
+  toolFeedback: Array<ToolFeedback>;
 }) => {
   const [mode, setMode] = useState<'view' | 'edit'>('view');
 
@@ -64,6 +75,14 @@ const PurePreviewMessage = ({
           )}
 
           <div className="flex flex-col gap-4 w-full">
+            {/* Tool feedback for assistant messages */}
+            {message.role === 'assistant' && (
+              <MessageToolFeedback 
+                feedback={toolFeedback}
+                isActive={isLoading}
+              />
+            )}
+
             {message.experimental_attachments && (
               <div
                 data-testid={`message-attachments`}
@@ -204,6 +223,7 @@ export const PreviewMessage = memo(
     if (prevProps.message.id !== nextProps.message.id) return false;
     if (!equal(prevProps.message.parts, nextProps.message.parts)) return false;
     if (!equal(prevProps.vote, nextProps.vote)) return false;
+    if (!equal(prevProps.toolFeedback, nextProps.toolFeedback)) return false;
 
     return true;
   },
