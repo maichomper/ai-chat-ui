@@ -1,7 +1,6 @@
 import { motion } from 'framer-motion';
 import Link from 'next/link';
-
-import { MessageIcon, VercelIcon } from './icons';
+import Image from 'next/image';
 
 export const Overview = () => {
   return (
@@ -14,15 +13,19 @@ export const Overview = () => {
       transition={{ delay: 0.5 }}
     >
       <div className="rounded-xl p-6 flex flex-col gap-8 leading-relaxed text-center max-w-xl">
-        <p className="flex flex-row justify-center gap-4 items-center">
-          <VercelIcon size={32} />
-          <span>+</span>
-          <MessageIcon size={32} />
-        </p>
+        <div className="flex justify-center">
+          <Image
+            src="/images/logo.png"
+            alt="Exterior Concept Logo"
+            width={200}
+            height={200}
+            className="object-contain"
+          />
+        </div>
         <p>
-        ¡Hola! Soy el Agente de Ventas Inteligente, especializado en generar cotizaciones para Exterior Concept.
+        ¡Hola! Soy el Agente de Ventas Inteligente de Exterior Concept, especializado en generar cotizaciones.
         <br />
-        Puedes comenzar proporcionando información del cliente o solicitando una cotización para productos específicos. El asistente le guiará durante todo el proceso.
+        Puedes comenzar proporcionando información del cliente o solicitando una cotización para productos específicos. El asistente te guiará durante todo el proceso. 
         </p>
       </div>
     </motion.div>
