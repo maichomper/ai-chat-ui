@@ -84,6 +84,8 @@ export function PureMessageActions({
           <TooltipContent>Copy</TooltipContent>
         </Tooltip>
 
+        {/* Hidden thumbs up/down buttons for Exterior Concept */}
+        {/*
         <Tooltip>
           <TooltipTrigger asChild>
             <Button
@@ -197,6 +199,7 @@ export function PureMessageActions({
           </TooltipTrigger>
           <TooltipContent>Downvote Response</TooltipContent>
         </Tooltip>
+        */}
       </div>
     </TooltipProvider>
   );

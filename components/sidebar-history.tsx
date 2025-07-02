@@ -83,6 +83,8 @@ const PureChatItem = ({
         </Link>
       </SidebarMenuButton>
 
+      {/* Hidden contextual menu for Exterior Concept - Share/Delete not implemented */}
+      {/*
       <DropdownMenu modal={true}>
         <DropdownMenuTrigger asChild>
           <SidebarMenuAction
@@ -141,6 +143,7 @@ const PureChatItem = ({
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
+      */}
     </SidebarMenuItem>
   );
 };
