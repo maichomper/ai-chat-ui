@@ -1,6 +1,5 @@
 import { ApiError, ChatEvent, ChatMessage, Conversation, ConversationsResponse, GetConversationsRequest, SendMessageRequest } from './types';
 import { headers } from 'next/headers';
-import { signOut } from 'next-auth/react';
 
 const API_BASE_URL = process.env.HARVEST_API_URL || 'http://localhost:8000';
 
@@ -20,9 +19,9 @@ class ChatApi {
         
         if (response.status === 401) {
           console.log('Auth error detected in fetchWithAuth');
-          // Sign out the user which will clear the session and cookies
-          await signOut({ redirect: true, callbackUrl: '/login' });
-          throw new Error('Session expired. Please log in again.');
+          const authError = new Error('Authentication failed. Please log in again.');
+          authError.name = 'AuthError';
+          throw authError;
         }
         
         throw new Error(error.message || `API request failed with status ${response.status}`);
