@@ -39,7 +39,8 @@ export default function Page() {
       });
     } else if (state.status === 'success') {
       setIsSuccessful(true);
-      router.push('/');
+      // Use window.location instead of router.push to avoid race conditions
+      window.location.href = '/';
     }
   }, [state?.status]);
 

@@ -30,7 +30,7 @@ export const login = async (
     const result = await signIn('credentials', {
       email: validatedData.email,
       password: validatedData.password,
-      redirect: false,
+      redirect: false, // Keep client-side control
     });
 
     if (result?.error) {
@@ -72,6 +72,3 @@ export const register = async (
     return { status: 'failed' };
   }
 };
-
-// Note: Registration is handled by your API, so we'll remove the register action
-// You can add it back later if needed

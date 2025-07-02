@@ -14,41 +14,41 @@ export const authConfig = {
       const isLoggedIn = !!auth?.user;
       const pathname = nextUrl.pathname;
       
-      // Explicitly allow auth API endpoints
+      // Always allow auth API endpoints
       if (pathname.startsWith('/api/auth')) {
         return true;
       }
       
       // Handle login/register pages
-      const isOnRegister = pathname.startsWith('/register');
-      const isOnLogin = pathname.startsWith('/login');
+      const isOnAuthPage = pathname.startsWith('/login') || pathname.startsWith('/register');
       
-      // Allow POST requests to login/register
-      if ((isOnLogin || isOnRegister) && method === 'POST') {
+      // Allow POST requests to auth pages (for form submissions)
+      if (isOnAuthPage && method === 'POST') {
         return true;
       }
 
-      if (isLoggedIn && (isOnLogin || isOnRegister)) {
+      // Redirect logged-in users away from auth pages
+      if (isLoggedIn && isOnAuthPage) {
         return Response.redirect(new URL('/', nextUrl as unknown as URL));
       }
 
-      if (isOnRegister || isOnLogin) {
-        return true; // Always allow access to register and login pages
+      // Allow unauthenticated access to auth pages
+      if (isOnAuthPage) {
+        return true;
       }
       
-      // Define protected routes more specifically
-      // Check if it's a protected route that needs authentication
+      // Define protected routes that require authentication
       const isProtectedRoute = 
         pathname === '/' || // Home page
         /^\/[a-zA-Z0-9-_]+$/.test(pathname) || // Chat ID routes like /:id
-        pathname.startsWith('/api/') && !pathname.startsWith('/api/auth'); // API routes except auth
+        (pathname.startsWith('/api/') && !pathname.startsWith('/api/auth')); // API routes except auth
       
-      if (isProtectedRoute) {
-        if (isLoggedIn) return true;
+      // Protect routes that need authentication
+      if (isProtectedRoute && !isLoggedIn) {
         return Response.redirect(new URL('/login', nextUrl as unknown as URL));
       }
 
-      // Default: allow access
+      // Allow access by default
       return true;
     },
   },
