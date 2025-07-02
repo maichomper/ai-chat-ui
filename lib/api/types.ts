@@ -106,6 +106,8 @@ export type ChatEvent = {
     agent_name?: string;
     item_type?: string;
     tool_name?: string;
+    arguments?: any;
+    output?: any;
   };
 };
 

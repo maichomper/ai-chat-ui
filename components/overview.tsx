@@ -17,8 +17,8 @@ export const Overview = () => {
           <Image
             src="/images/logo.png"
             alt="Exterior Concept Logo"
-            width={200}
-            height={200}
+            width={128}
+            height={128}
             className="object-contain"
           />
         </div>
