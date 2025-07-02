@@ -34,9 +34,6 @@ export async function GET(request: Request) {
 
     const response = await chatApi.getConversations({}, accessToken);
     
-    console.log('[SERVER] Raw response from API:', JSON.stringify(response, null, 2));
-    console.log('[SERVER] Response type:', typeof response);
-    
     // Handle both direct array response and wrapped response
     const conversationsArray = Array.isArray(response) ? response : response.conversations;
 
@@ -45,24 +42,15 @@ export async function GET(request: Request) {
       return new Response('Invalid response format from API', { status: 500 });
     }
     
-    console.log('[SERVER] First conversation object:', JSON.stringify(conversationsArray[0], null, 2));
-    console.log('[SERVER] First conversation ID type:', typeof conversationsArray[0]?.id);
-    console.log('[SERVER] First conversation ID:', conversationsArray[0]?.id);
-    
     // Convert the conversation summaries to the format expected by the UI
-    const conversations = conversationsArray.map(conv => {
-      console.log('[SERVER] Processing conversation:', JSON.stringify(conv, null, 2));
-      return {
-        id: conv.id,
-        title: conv.title, // Convert to string first
-        created_at: conv.created_at,
-        updated_at: conv.updated_at,
-        visibility: conv.visibility || 'private',
-        userId: session.user.id
-      };
-    });
-
-    console.log('[SERVER] Mapped conversations for UI:', JSON.stringify(conversations, null, 2));
+    const conversations = conversationsArray.map(conv => ({
+      id: conv.title, // Use title as ID since API doesn't return separate id field
+      title: conv.title, 
+      created_at: conv.created_at,
+      updated_at: conv.updated_at,
+      visibility: conv.visibility || 'private',
+      userId: session.user.id
+    }));
 
     return Response.json(conversations);
   } catch (error) {

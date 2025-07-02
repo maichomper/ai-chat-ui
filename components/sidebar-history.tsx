@@ -291,20 +291,21 @@ export function SidebarHistory({ user }: { user: User | undefined }) {
       <SidebarGroup>
         <SidebarGroupContent>
           <SidebarMenu>
-            {history &&
-              (() => {
+{history && (() => {
                 const groupedChats = groupChatsByDate(history);
 
                 return (
                   <>
                     {groupedChats.today.length > 0 && (
                       <>
-                        <div className="px-2 py-1 text-xs text-sidebar-foreground/50">
-                          Today
-                        </div>
+                        <SidebarMenuItem key="today-header">
+                          <div className="px-2 py-1 text-xs text-sidebar-foreground/50">
+                            Today
+                          </div>
+                        </SidebarMenuItem>
                         {groupedChats.today.map((chat) => (
                           <ChatItem
-                            key={chat.id}
+                            key={`today-${chat.id}`}
                             chat={chat}
                             isActive={chat.id === id}
                             onDelete={(chatId) => {
@@ -319,12 +320,14 @@ export function SidebarHistory({ user }: { user: User | undefined }) {
 
                     {groupedChats.yesterday.length > 0 && (
                       <>
-                        <div className="px-2 py-1 text-xs text-sidebar-foreground/50 mt-6">
-                          Yesterday
-                        </div>
+                        <SidebarMenuItem key="yesterday-header">
+                          <div className="px-2 py-1 text-xs text-sidebar-foreground/50 mt-6">
+                            Yesterday
+                          </div>
+                        </SidebarMenuItem>
                         {groupedChats.yesterday.map((chat) => (
                           <ChatItem
-                            key={chat.id}
+                            key={`yesterday-${chat.id}`}
                             chat={chat}
                             isActive={chat.id === id}
                             onDelete={(chatId) => {
@@ -339,12 +342,14 @@ export function SidebarHistory({ user }: { user: User | undefined }) {
 
                     {groupedChats.lastWeek.length > 0 && (
                       <>
-                        <div className="px-2 py-1 text-xs text-sidebar-foreground/50 mt-6">
-                          Last 7 days
-                        </div>
+                        <SidebarMenuItem key="lastweek-header">
+                          <div className="px-2 py-1 text-xs text-sidebar-foreground/50 mt-6">
+                            Last 7 days
+                          </div>
+                        </SidebarMenuItem>
                         {groupedChats.lastWeek.map((chat) => (
                           <ChatItem
-                            key={chat.id}
+                            key={`lastweek-${chat.id}`}
                             chat={chat}
                             isActive={chat.id === id}
                             onDelete={(chatId) => {
@@ -359,12 +364,14 @@ export function SidebarHistory({ user }: { user: User | undefined }) {
 
                     {groupedChats.lastMonth.length > 0 && (
                       <>
-                        <div className="px-2 py-1 text-xs text-sidebar-foreground/50 mt-6">
-                          Last 30 days
-                        </div>
+                        <SidebarMenuItem key="lastmonth-header">
+                          <div className="px-2 py-1 text-xs text-sidebar-foreground/50 mt-6">
+                            Last 30 days
+                          </div>
+                        </SidebarMenuItem>
                         {groupedChats.lastMonth.map((chat) => (
                           <ChatItem
-                            key={chat.id}
+                            key={`lastmonth-${chat.id}`}
                             chat={chat}
                             isActive={chat.id === id}
                             onDelete={(chatId) => {
@@ -379,12 +386,14 @@ export function SidebarHistory({ user }: { user: User | undefined }) {
 
                     {groupedChats.older.length > 0 && (
                       <>
-                        <div className="px-2 py-1 text-xs text-sidebar-foreground/50 mt-6">
-                          Older
-                        </div>
+                        <SidebarMenuItem key="older-header">
+                          <div className="px-2 py-1 text-xs text-sidebar-foreground/50 mt-6">
+                            Older
+                          </div>
+                        </SidebarMenuItem>
                         {groupedChats.older.map((chat) => (
                           <ChatItem
-                            key={chat.id}
+                            key={`older-${chat.id}`}
                             chat={chat}
                             isActive={chat.id === id}
                             onDelete={(chatId) => {
