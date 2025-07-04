@@ -47,6 +47,7 @@ export function Chat({
   const [attachments, setAttachments] = useState<Array<Attachment>>([]);
   const [currentAgent, setCurrentAgent] = useState<string | null>(null);
   const [messageToolFeedback, setMessageToolFeedback] = useState<Map<string, ToolFeedback[]>>(new Map());
+  const [messageToolsActive, setMessageToolsActive] = useState<Map<string, boolean>>(new Map());
   const [previousDataLength, setPreviousDataLength] = useState(0);
   const isArtifactVisible = useArtifactSelector((state) => state.isVisible);
 
@@ -118,10 +119,40 @@ export function Chat({
         // Associate new tool feedback with the current message being streamed
         const currentMessageId = messages[messages.length - 1]?.id;
         if (currentMessageId) {
+          // Update tool feedback first
           setMessageToolFeedback(prev => {
             const newMap = new Map(prev);
             const existingFeedback = newMap.get(currentMessageId) || [];
-            newMap.set(currentMessageId, [...existingFeedback, ...newFeedbackData]);
+            const updatedFeedback = [...existingFeedback, ...newFeedbackData];
+            newMap.set(currentMessageId, updatedFeedback);
+            
+            // Update tool activity state based on the complete feedback
+            setMessageToolsActive(prevActive => {
+              const newActiveMap = new Map(prevActive);
+              
+              const startCount = updatedFeedback.filter(f => f.action === 'start' || f.action === 'call').length;
+              const endCount = updatedFeedback.filter(f => f.action === 'end' || f.action === 'result').length;
+              
+              console.log(`Message ${currentMessageId}: ${startCount} starts, ${endCount} ends`);
+              
+              if (startCount > 0) {
+                if (endCount >= startCount) {
+                  // All tools completed - mark as inactive
+                  newActiveMap.set(currentMessageId, false);
+                  console.log(`All tools completed for message ${currentMessageId}`);
+                } else {
+                  // Still have active tools
+                  newActiveMap.set(currentMessageId, true);
+                  console.log(`Tools still active for message ${currentMessageId}`);
+                }
+              } else {
+                // No tools started yet
+                newActiveMap.set(currentMessageId, false);
+              }
+              
+              return newActiveMap;
+            });
+            
             return newMap;
           });
         }
@@ -142,6 +173,11 @@ export function Chat({
         setMessageToolFeedback(prev => {
           const newMap = new Map(prev);
           newMap.set(currentMessageId, []);
+          return newMap;
+        });
+        setMessageToolsActive(prev => {
+          const newMap = new Map(prev);
+          newMap.set(currentMessageId, false);
           return newMap;
         });
       }
@@ -182,6 +218,7 @@ export function Chat({
             isReadonly={isReadonly}
             isArtifactVisible={isArtifactVisible}
             messageToolFeedback={messageToolFeedback}
+            messageToolsActive={messageToolsActive}
           />
         </div>
         

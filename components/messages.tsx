@@ -37,6 +37,7 @@ interface MessagesProps {
   isReadonly: boolean;
   isArtifactVisible: boolean;
   messageToolFeedback: Map<string, ToolFeedback[]>;
+  messageToolsActive: Map<string, boolean>;
 }
 
 function PureMessages({
@@ -48,6 +49,7 @@ function PureMessages({
   reload,
   isReadonly,
   messageToolFeedback,
+  messageToolsActive,
 }: MessagesProps) {
   const [messagesContainerRef, messagesEndRef] =
     useScrollToBottom<HTMLDivElement>();
@@ -75,6 +77,7 @@ function PureMessages({
           reload={reload}
           isReadonly={isReadonly}
           toolFeedback={messageToolFeedback.get(message.id) || []}
+          toolsActive={messageToolsActive.get(message.id) || false}
         />
       ))}
 

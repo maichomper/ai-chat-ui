@@ -37,6 +37,7 @@ const PurePreviewMessage = ({
   reload,
   isReadonly,
   toolFeedback,
+  toolsActive,
 }: {
   chatId: string;
   message: UIMessage;
@@ -46,6 +47,7 @@ const PurePreviewMessage = ({
   reload: UseChatHelpers['reload'];
   isReadonly: boolean;
   toolFeedback: Array<ToolFeedback>;
+  toolsActive: boolean;
 }) => {
   const [mode, setMode] = useState<'view' | 'edit'>('view');
 
@@ -80,7 +82,7 @@ const PurePreviewMessage = ({
             {message.role === 'assistant' && (
               <MessageToolFeedback 
                 feedback={toolFeedback}
-                isActive={isLoading}
+                isActive={isLoading || toolsActive}
               />
             )}
 
@@ -221,6 +223,7 @@ export const PreviewMessage = memo(
   PurePreviewMessage,
   (prevProps, nextProps) => {
     if (prevProps.isLoading !== nextProps.isLoading) return false;
+    if (prevProps.toolsActive !== nextProps.toolsActive) return false;
     if (prevProps.message.id !== nextProps.message.id) return false;
     if (!equal(prevProps.message.parts, nextProps.message.parts)) return false;
     if (!equal(prevProps.vote, nextProps.vote)) return false;
