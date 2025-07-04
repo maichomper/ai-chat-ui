@@ -36,7 +36,7 @@ interface MessagesProps {
   reload: UseChatHelpers['reload'];
   isReadonly: boolean;
   isArtifactVisible: boolean;
-  toolFeedback: Array<ToolFeedback>;
+  messageToolFeedback: Map<string, ToolFeedback[]>;
 }
 
 function PureMessages({
@@ -47,7 +47,7 @@ function PureMessages({
   setMessages,
   reload,
   isReadonly,
-  toolFeedback,
+  messageToolFeedback,
 }: MessagesProps) {
   const [messagesContainerRef, messagesEndRef] =
     useScrollToBottom<HTMLDivElement>();
@@ -56,7 +56,7 @@ function PureMessages({
     <div
       ref={messagesContainerRef}
       data-scroll-container
-      className="flex flex-col min-w-0 gap-6 flex-1 overflow-y-scroll pt-4 pb-4"
+      className="flex flex-col min-w-0 gap-6 flex-1 overflow-y-scroll py-4"
     >
       {messages.length === 0 && <Overview />}
 
@@ -74,7 +74,7 @@ function PureMessages({
           setMessages={setMessages}
           reload={reload}
           isReadonly={isReadonly}
-          toolFeedback={toolFeedback}
+          toolFeedback={messageToolFeedback.get(message.id) || []}
         />
       ))}
 

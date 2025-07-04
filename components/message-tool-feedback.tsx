@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 interface ToolFeedback {
@@ -18,10 +18,24 @@ interface MessageToolFeedbackProps {
 }
 
 export function MessageToolFeedback({ feedback, isActive = false }: MessageToolFeedbackProps) {
-  const [isOpen, setIsOpen] = useState(isActive);
+  const [isOpen, setIsOpen] = useState(false);
   const [expandedItems, setExpandedItems] = useState<number[]>([]);
 
-  if (feedback.length === 0) return null;
+  // Auto-open when streaming starts, auto-close when streaming ends
+  useEffect(() => {
+    if (isActive) {
+      // Auto-open when message becomes active and has feedback
+      if (feedback && feedback.length > 0) {
+        setIsOpen(true);
+      }
+    } else {
+      // Auto-close when message finishes streaming
+      setIsOpen(false);
+    }
+  }, [isActive, feedback]);
+
+  // Don't render if no feedback
+  if (!feedback || feedback.length === 0) return null;
 
   const toggleItem = (index: number) => {
     setExpandedItems(prev => 
@@ -30,7 +44,6 @@ export function MessageToolFeedback({ feedback, isActive = false }: MessageToolF
         : [...prev, index]
     );
   };
-
 
   const getToolEmoji = (tool: string) => {
     if (tool.toLowerCase().includes('weather')) return '🌤️';

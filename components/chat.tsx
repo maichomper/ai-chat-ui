@@ -46,7 +46,8 @@ export function Chat({
   const { status } = useSession();
   const [attachments, setAttachments] = useState<Array<Attachment>>([]);
   const [currentAgent, setCurrentAgent] = useState<string | null>(null);
-  const [toolFeedback, setToolFeedback] = useState<ToolFeedback[]>([]);
+  const [messageToolFeedback, setMessageToolFeedback] = useState<Map<string, ToolFeedback[]>>(new Map());
+  const [previousDataLength, setPreviousDataLength] = useState(0);
   const isArtifactVisible = useArtifactSelector((state) => state.isVisible);
 
   useEffect(() => {
@@ -96,10 +97,15 @@ export function Chat({
     }
   }, [data, currentAgent]);
 
-  // Track tool feedback
+  // Track tool feedback per message - only process new data
   useEffect(() => {
-    if (data) {
-      const feedbackData = data
+    if (data && messages.length > 0) {
+      const currentDataLength = data.length;
+      
+      // Only process new data items that came in since last update
+      const newDataItems = data.slice(previousDataLength);
+      
+      const newFeedbackData = newDataItems
         .filter((item: any): item is { feedback: ToolFeedback } => 
           typeof item === 'object' && 
           item !== null && 
@@ -108,11 +114,39 @@ export function Chat({
         )
         .map(item => item.feedback);
 
-      if (feedbackData.length > 0) {
-        setToolFeedback(feedbackData);
+      if (newFeedbackData.length > 0) {
+        // Associate new tool feedback with the current message being streamed
+        const currentMessageId = messages[messages.length - 1]?.id;
+        if (currentMessageId) {
+          setMessageToolFeedback(prev => {
+            const newMap = new Map(prev);
+            const existingFeedback = newMap.get(currentMessageId) || [];
+            newMap.set(currentMessageId, [...existingFeedback, ...newFeedbackData]);
+            return newMap;
+          });
+        }
+      }
+      
+      // Update the previous data length
+      setPreviousDataLength(currentDataLength);
+    }
+  }, [data, messages, previousDataLength]);
+
+  // Reset data tracking when starting a new message
+  useEffect(() => {
+    if (isLoading && messages.length > 0) {
+      // When starting to stream a new message, reset the data tracking
+      const currentMessageId = messages[messages.length - 1]?.id;
+      if (currentMessageId && !messageToolFeedback.has(currentMessageId)) {
+        // This is a new message, clear its tool feedback
+        setMessageToolFeedback(prev => {
+          const newMap = new Map(prev);
+          newMap.set(currentMessageId, []);
+          return newMap;
+        });
       }
     }
-  }, [data]);
+  }, [isLoading, messages, messageToolFeedback]);
 
   const handleInput = useCallback((value: string | ((prev: string) => string)) => {
     if (typeof value === 'function') {
@@ -147,12 +181,12 @@ export function Chat({
             }}
             isReadonly={isReadonly}
             isArtifactVisible={isArtifactVisible}
-            toolFeedback={toolFeedback}
+            messageToolFeedback={messageToolFeedback}
           />
         </div>
         
         {/* Floating input - truly floating at bottom of chat window */}
-        <div className="sticky bottom-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-sm border-t border-border p-4 pointer-events-auto">
+        <div className="sticky bottom-0 inset-x-0 z-50 bg-background/95 backdrop-blur-sm border-t border-border p-4 pointer-events-auto">
           <MultimodalInput
             chatId={id}
             input={input}
